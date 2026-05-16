@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>أدوات سريعة - مجاني</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body{font-family:Arial,sans-serif;background:#111;color:#fff;text-align:center;padding:20px}
+  .box{background:#1e1e1e;padding:20px;margin:20px auto;max-width:500px;border-radius:12px}
+  input,button{width:90%;padding:12px;margin:8px 0;border:none;border-radius:8px;font-size:16px}
+  input{background:#2a2a2a;color:#fff}
+  button{background:#25f4ee;color:#000;font-weight:bold;cursor:pointer}
+  
+  /* كرت النتيجة */
+  .age-card{
+    background: linear-gradient(135deg,#25f4ee,#fe2c55);
+    padding:20px;
+    border-radius:15px;
+    margin-top:15px;
+    display:none;
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop{
+    0%{transform:scale(0.8);opacity:0}
+    100%{transform:scale(1);opacity:1}
+  }
+  .age-card h2{margin:0;font-size:24px}
+  .age-card p{margin:8px 0;font-size:16px}
+  .copy-btn{background:#fff;color:#000;padding:8px 15px;border-radius:8px;margin-top:10px;cursor:pointer}
+  
+  /* زرار الشير */
+  .share-box{
+    margin-top:30px;
+    padding:20px;
+    background:#1e1e1e;
+    border-radius:12px;
+  }
+  .share-btn{
+    background:linear-gradient(90deg,#25f4ee,#fe2c55);
+    color:#fff;
+    font-size:18px;
+  }
+</style>
+</head>
+<body>
+<h1>⚡ أدوات سريعة</h1>
+
+<div class="box">
+  <h3>2. حاسبة العمر 🎂</h3>
+  <input type="date" id="birth">
+  <button onclick="calcAge()">احسب عمري</button>
+  
+  <div class="age-card" id="ageCard">
+    <h2 id="ageMain">🎉 عندك 29 سنة و3 شهور و12 يوم</h2>
+    <p id="ageDetail">⏳ فاضلك 18 يوم على عيد ميلادك الجاي</p>
+    <p id="ageText">🎂 أنا النهارده عندي 29 سنة! فاضل 18 يوم وأبقى 30 🎉</p>
+    <div class="copy-btn" onclick="copyText()">📋 نسخ النص</div>
+  </div>
+</div>
+
+<!-- زرار الشير -->
+<div class="share-box">
+  <h3>📤 عجبك الموقع؟</h3>
+  <button class="share-btn" onclick="shareSite()">شير لاصحابك</button>
+</div>
+
+<script>
+function calcAge(){
+  let birth = document.getElementById('birth').value;
+  if(!birth){alert('اختار تاريخ ميلادك الأول'); return;}
+  
+  let birthDate = new Date(birth);
+  let today = new Date();
+  
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+  let days = today.getDate() - birthDate.getDate();
+  
+  if(days < 0){
+    months--;
+    days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+  }
+  if(months < 0){
+    years--;
+    months += 12;
+  }
+  
+  let nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+  if(nextBirthday < today){
+    nextBirthday.setFullYear(today.getFullYear() + 1);
+  }
+  let diffTime = nextBirthday - today;
+  let daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  document.getElementById('ageMain').innerText = `🎉 عندك ${years} سنة و${months} شهر و${days} يوم`;
+  document.getElementById('ageDetail').innerText = `⏳ فاضلك ${daysLeft} يوم على عيد ميلادك الجاي`;
+  document.getElementById('ageText').innerText = `🎂 أنا النهارده عندي ${years} سنة! فاضل ${daysLeft} يوم وأبقى ${years+1} سنة 🎉`;
+  
+  document.getElementById('ageCard').style.display = 'block';
+  launchConfetti();
+}
+
+function copyText(){
+  let text = document.getElementById('ageText').innerText;
+  navigator.clipboard.writeText(text);
+  alert('تم النسخ! حطه في الستوري أو البوست 📸');
+}
+
+function launchConfetti(){
+  for(let i=0;i<20;i++){
+    let confetti = document.createElement('div');
+    confetti.innerText = '🎈';
+    confetti.style.position='fixed';
+    confetti.style.left=Math.random()*100+'vw';
+    confetti.style.top='-50px';
+    confetti.style.fontSize='25px';
+    confetti.style.transition='top 2s ease-out';
+    document.body.appendChild(confetti);
+    setTimeout(()=>{confetti.style.top='110vh'},10);
+    setTimeout(()=>{confetti.remove()},2000);
+  }
+}
+
+function shareSite(){
+  let shareData = {
+    title: 'أدوات سريعة',
+    text: 'جرب الموقع ده 🔥 فيه حاسبة عمر بتطلعلك فاضلك كام يوم على عيد ميلادك!',
+    url: window.location.href
+  }
+  
+  if(navigator.share){
+    navigator.share(shareData).catch(()=>{});
+  } 
+  else {
+    navigator.clipboard.writeText(window.location.href);
+    alert('الرابط اتنسخ! ابعته لاصحابك على واتساب 📱');
+  }
+}
+</script>
+</body>
+</html>
