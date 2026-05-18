@@ -2,140 +2,298 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>أدوات سريعة - مجاني</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أخبار الناس</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  body{font-family:Arial,sans-serif;background:#111;color:#fff;text-align:center;padding:20px}
-  .box{background:#1e1e1e;padding:20px;margin:20px auto;max-width:500px;border-radius:12px}
-  input,button{width:90%;padding:12px;margin:8px 0;border:none;border-radius:8px;font-size:16px}
-  input{background:#2a2a2a;color:#fff}
-  button{background:#25f4ee;color:#000;font-weight:bold;cursor:pointer}
-  
-  /* كرت النتيجة */
-  .age-card{
-    background: linear-gradient(135deg,#25f4ee,#fe2c55);
-    padding:20px;
-    border-radius:15px;
-    margin-top:15px;
-    display:none;
-    animation: pop 0.4s ease;
-  }
-  @keyframes pop{
-    0%{transform:scale(0.8);opacity:0}
-    100%{transform:scale(1);opacity:1}
-  }
-  .age-card h2{margin:0;font-size:24px}
-  .age-card p{margin:8px 0;font-size:16px}
-  .copy-btn{background:#fff;color:#000;padding:8px 15px;border-radius:8px;margin-top:10px;cursor:pointer}
-  
-  /* زرار الشير */
-  .share-box{
-    margin-top:30px;
-    padding:20px;
-    background:#1e1e1e;
-    border-radius:12px;
-  }
-  .share-btn{
-    background:linear-gradient(90deg,#25f4ee,#fe2c55);
-    color:#fff;
-    font-size:18px;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:#0a0a0a;color:#fff;padding:15px}
+.container{max-width:800px;margin:0 auto}
+header{background:linear-gradient(90deg,#001a33,#004488);padding:15px;border-radius:12px;border:2px solid #00aaff;margin-bottom:20px;text-align:center;position:relative}
+header h1{color:#66ccff;text-shadow:0 0 15px #00aaff}
+.tabs{display:flex;gap:10px;margin-bottom:15px}
+.tab{flex:1;padding:12px;text-align:center;background:#222;border-radius:8px;cursor:pointer;font-weight:700;user-select:none}
+.tab.active{background:#00aaff}
+.card{background:#111;padding:15px;border-radius:12px;border:1px solid #333;margin-bottom:15px}
+input,textarea{width:100%;padding:12px;margin-bottom:10px;background:#1a1a1a;border:1px solid #444;border-radius:8px;color:white;font-family:'Cairo',sans-serif;font-size:15px}
+input[type="file"]{padding:8px}
+button{padding:12px 20px;background:linear-gradient(90deg,#0088ff,#00aaff);border:none;border-radius:8px;color:white;font-weight:900;cursor:pointer;font-size:15px}
+button:disabled{opacity:0.5;cursor:not-allowed}
+.progress{height:10px;background:#222;border-radius:5px;margin:15px 0;display:none;overflow:hidden;border:1px solid #333}
+.progress-bar{height:100%;background:linear-gradient(90deg,#00aaff,#00ffcc);width:0%;transition:width 0.1s linear}
+.news-item{background:#1a1a1a;padding:15px;border-radius:12px;border:1px solid #333;margin-bottom:15px}
+.news-item h3{color:#66ccff;margin-bottom:8px;font-size:20px}
+.meta{color:#888;font-size:13px;margin-bottom:10px}
+.news-item img,.news-item video{width:100%;border-radius:8px;margin-bottom:10px;background:#000;max-height:450px;object-fit:cover}
+.comment-box{background:#0a0a0a;padding:10px;border-radius:8px;margin-top:15px;border-left:3px solid #00aaff}
+.comment{padding:8px 0;border-bottom:1px solid #222;font-size:14px}
+.comment:last-child{border-bottom:none}
+.comment-input{display:flex;gap:8px;margin-top:8px}
+.empty{text-align:center;color:#666;padding:40px;font-size:16px}
+.media-preview{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.media-preview img,.media-preview video{width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid #444}
 </style>
 </head>
 <body>
-<h1>⚡ أدوات سريعة</h1>
+<div class="container">
+  <header>
+    <h1>📰 أخبار الناس</h1>
+    <p>انشر خبرك بصور وفيديو وعلق عليه فوراً</p>
+  </header>
 
-<div class="box">
-  <h3>2. حاسبة العمر 🎂</h3>
-  <input type="date" id="birth">
-  <button onclick="calcAge()">احسب عمري</button>
-  
-  <div class="age-card" id="ageCard">
-    <h2 id="ageMain">🎉 عندك 29 سنة و3 شهور و12 يوم</h2>
-    <p id="ageDetail">⏳ فاضلك 18 يوم على عيد ميلادك الجاي</p>
-    <p id="ageText">🎂 أنا النهارده عندي 29 سنة! فاضل 18 يوم وأبقى 30 🎉</p>
-    <div class="copy-btn" onclick="copyText()">📋 نسخ النص</div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab(event, 'feed')">الأخبار</div>
+    <div class="tab" onclick="showTab(event, 'post')">نشر خبر</div>
+  </div>
+
+  <div id="feedTab">
+    <div id="newsList"><div class="empty">جاري التحميل...</div></div>
+  </div>
+
+  <div id="postTab" style="display:none">
+    <div class="card">
+      <input type="text" id="title" placeholder="عنوان الخبر">
+      <textarea id="content" rows="6" placeholder="اكتب تفاصيل الخبر هنا"></textarea>
+
+      <label style="display:block;margin-bottom:5px;color:#66ccff">ارفع صور (الحد الأقصى 5MB للظورة)</label>
+      <input type="file" id="imageFile" accept="image/*" multiple>
+
+      <label style="display:block;margin:10px 0 5px;color:#66ccff">ارفع فيديو (الحد الأقصى 40MB)</label>
+      <input type="file" id="videoFile" accept="video/*">
+
+      <div class="media-preview" id="preview"></div>
+      
+      <!-- شريط التحميل المعدل -->
+      <div class="progress" id="progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <button id="postBtn" onclick="postNews()">نشر الخبر</button>
+    </div>
   </div>
 </div>
 
-<!-- زرار الشير -->
-<div class="share-box">
-  <h3>📤 عجبك الموقع؟</h3>
-  <button class="share-btn" onclick="shareSite()">شير لاصحابك</button>
-</div>
-
 <script>
-function calcAge(){
-  let birth = document.getElementById('birth').value;
-  if(!birth){alert('اختار تاريخ ميلادك الأول'); return;}
-  
-  let birthDate = new Date(birth);
-  let today = new Date();
-  
-  let years = today.getFullYear() - birthDate.getFullYear();
-  let months = today.getMonth() - birthDate.getMonth();
-  let days = today.getDate() - birthDate.getDate();
-  
-  if(days < 0){
-    months--;
-    days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
-  }
-  if(months < 0){
-    years--;
-    months += 12;
-  }
-  
-  let nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-  if(nextBirthday < today){
-    nextBirthday.setFullYear(today.getFullYear() + 1);
-  }
-  let diffTime = nextBirthday - today;
-  let daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  document.getElementById('ageMain').innerText = `🎉 عندك ${years} سنة و${months} شهر و${days} يوم`;
-  document.getElementById('ageDetail').innerText = `⏳ فاضلك ${daysLeft} يوم على عيد ميلادك الجاي`;
-  document.getElementById('ageText').innerText = `🎂 أنا النهارده عندي ${years} سنة! فاضل ${daysLeft} يوم وأبقى ${years+1} سنة 🎉`;
-  
-  document.getElementById('ageCard').style.display = 'block';
-  launchConfetti();
+// 1. ضع بيانات المشروع الخاص بك هنا
+const SUPABASE_URL = 'https://sb_publishable_CdeI-_nNCN9esA5Gc1DM1g_imrd2VYX
+const SUPABASE_KEY = 'YOUR_ANON_KEY_HERE';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// تصليح تمرير الـ event لتجنب توقف التبويبات
+function showTab(e, tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('feedTab').style.display = tab==='feed'?'block':'none';
+  document.getElementById('postTab').style.display = tab==='post'?'block':'none';
+  e.currentTarget.classList.add('active');
+  if(tab==='feed') loadNews();
 }
 
-function copyText(){
-  let text = document.getElementById('ageText').innerText;
-  navigator.clipboard.writeText(text);
-  alert('تم النسخ! حطه في الستوري أو البوست 📸');
-}
+// معاينة الوسائط قبل الرفع
+document.getElementById('imageFile').onchange = showPreview;
+document.getElementById('videoFile').onchange = showPreview;
 
-function launchConfetti(){
-  for(let i=0;i<20;i++){
-    let confetti = document.createElement('div');
-    confetti.innerText = '🎈';
-    confetti.style.position='fixed';
-    confetti.style.left=Math.random()*100+'vw';
-    confetti.style.top='-50px';
-    confetti.style.fontSize='25px';
-    confetti.style.transition='top 2s ease-out';
-    document.body.appendChild(confetti);
-    setTimeout(()=>{confetti.style.top='110vh'},10);
-    setTimeout(()=>{confetti.remove()},2000);
+function showPreview(){
+  const preview = document.getElementById('preview');
+  preview.innerHTML = '';
+  const images = document.getElementById('imageFile').files;
+  const video = document.getElementById('videoFile').files[0];
+
+  for(let i=0; i<images.length; i++){
+    const url = URL.createObjectURL(images[i]);
+    preview.innerHTML += `<img src="${url}">`;
+  }
+  if(video){
+    const url = URL.createObjectURL(video);
+    preview.innerHTML += `<video src="${url}" muted></video>`;
   }
 }
 
-function shareSite(){
-  let shareData = {
-    title: 'أدوات سريعة',
-    text: 'جرب الموقع ده 🔥 فيه حاسبة عمر بتطلعلك فاضلك كام يوم على عيد ميلادك!',
-    url: window.location.href
+// دالة مساعدة لتحديث شريط التقدم بشكل سلس
+function updateProgress(percentage) {
+  document.getElementById('progressBar').style.width = percentage + '%';
+}
+
+// نشر خبر مع معالجة الحجم والرفع الحقيقي
+async function postNews(){
+  const title = document.getElementById('title').value.trim();
+  const content = document.getElementById('content').value.trim();
+  const imageFiles = document.getElementById('imageFile').files;
+  const videoFile = document.getElementById('videoFile').files[0];
+
+  if(!title || !content){
+    alert('الرجاء كتابة العنوان والمحتوى أولاً');
+    return;
   }
+
+  // 1. فحص أحجام الملفات لحماية السيرفر من الامتلاء
+  for(let i=0; i<imageFiles.length; i++){
+    if(imageFiles[i].size > 5 * 1024 * 1024){
+      alert(`الصورة "${imageFiles[i].name}" حجمها كبير جداً. الحد الأقصى 5 ميجاابايت.`);
+      return;
+    }
+  }
+  if(videoFile && videoFile.size > 40 * 1024 * 1024){
+    alert('حجم الفيديو كبير جداً! الحد الأقصى المسموح به هو 40 ميجابايت.');
+    return;
+  }
+
+  const postBtn = document.getElementById('postBtn');
+  postBtn.disabled = true;
+  postBtn.textContent = 'جاري الرفع والنشر...';
   
-  if(navigator.share){
-    navigator.share(shareData).catch(()=>{});
-  } 
-  else {
-    navigator.clipboard.writeText(window.location.href);
-    alert('الرابط اتنسخ! ابعته لاصحابك على واتساب 📱');
+  let imageUrls = [];
+  let videoUrl = null;
+
+  try {
+    document.getElementById('progress').style.display = 'block';
+    updateProgress(5);
+
+    // حساب حصة كل ملف في شريط التحميل
+    const totalFiles = imageFiles.length + (videoFile ? 1 : 0);
+    let filesUploaded = 0;
+
+    // رفع الصور
+    for(let i=0; i<imageFiles.length; i++){
+      const file = imageFiles[i];
+      const fileName = Date.now() + '_img_' + i + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '');
+
+      const {error} = await supabase.storage.from('media').upload(fileName, file);
+      if(error) throw error;
+
+      const {data:{publicUrl}} = supabase.storage.from('media').getPublicUrl(fileName);
+      imageUrls.push(publicUrl);
+
+      filesUploaded++;
+      updateProgress((filesUploaded / totalFiles) * 90); 
+    }
+
+    // رفع الفيديو
+    if(videoFile){
+      const fileName = Date.now() + '_vid_' + videoFile.name.replace(/[^a-zA-Z0-9.]/g, '');
+      const {error} = await supabase.storage.from('media').upload(fileName, videoFile);
+      if(error) throw error;
+
+      const {data:{publicUrl}} = supabase.storage.from('media').getPublicUrl(fileName);
+      videoUrl = publicUrl;
+
+      filesUploaded++;
+      updateProgress(90);
+    }
+
+    // حفظ البيانات في الجدول لقاعدة البيانات
+    const {error} = await supabase.from('news').insert([{
+      title,
+      content,
+      image_urls: imageUrls,
+      video_url: videoUrl
+    }]);
+
+    if(error) throw error;
+
+    updateProgress(100);
+    setTimeout(() => {
+      alert('تم نشر الخبر بنجاح! 🎉');
+      resetForm();
+      // افتح تبويب الأخبار بشكل صحيح ومرر الـ event كـ null
+      showTab({ currentTarget: document.querySelectorAll('.tab')[0] }, 'feed');
+    }, 400);
+
+  } catch(err){
+    alert('حدث خطأ أثناء النشر: ' + err.message);
+    console.error(err);
+  } finally {
+    postBtn.disabled = false;
+    postBtn.textContent = 'نشر الخبر';
+    document.getElementById('progress').style.style.display = 'none';
   }
 }
+
+function resetForm(){
+  document.getElementById('title').value='';
+  document.getElementById('content').value='';
+  document.getElementById('imageFile').value='';
+  document.getElementById('videoFile').value='';
+  document.getElementById('preview').innerHTML='';
+  updateProgress(0);
+}
+
+async function loadNews(){
+  // جلب الأخبار مع التعليقات المرتبطة بها
+  const {data, error} = await supabase.from('news')
+    .select('*, comments(*)')
+    .order('created_at', {ascending: false});
+
+  if(error){
+    document.getElementById('newsList').innerHTML='<div class="empty">حدث خطأ أثناء تحميل الأخبار</div>';
+    return;
+  }
+
+  if(!data || data.length === 0){
+    document.getElementById('newsList').innerHTML='<div class="empty">لا توجد أخبار منشورة حالياً</div>';
+    return;
+  }
+
+  document.getElementById('newsList').innerHTML = data.map(news=>`
+    <div class="news-item">
+      <h3>${escapeHtml(news.title)}</h3>
+      <div class="meta">${new Date(news.created_at).toLocaleString('ar-LY')}</div>
+
+      ${news.image_urls && Array.isArray(news.image_urls) ? news.image_urls.map(url=>`<img src="${url}" alt="صورة الخبر">`).join(''):''}
+      ${news.video_url ? `<video src="${news.video_url}" controls preload="metadata"></video>`:''}
+
+      <p style="line-height:1.8; white-space: pre-line;">${escapeHtml(news.content)}</p>
+
+      <div class="comment-box">
+        <h4 style="margin-bottom:8px; color:#66ccff">التعليقات</h4>
+        <div id="comments-list-${news.id}">
+          ${news.comments && news.comments.length > 0 ? news.comments.map(c=>`<div class="comment">${escapeHtml(c.content)}</div>`).join('') : '<p style="color:#555; font-size:13px;" class="no-comment">لا توجد تعليقات بعد.</p>'}
+        </div>
+        <div class="comment-input">
+          <input type="text" id="comment-${news.id}" placeholder="اكتب تعليقاً عاجلاً...">
+          <button onclick="postComment(${news.id})">تعليق</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function postComment(newsId){
+  const input = document.getElementById(`comment-${newsId}`);
+  const content = input.value.trim();
+  if(!content) return;
+
+  const btn = input.nextElementSibling;
+  btn.disabled = true;
+
+  const {error} = await supabase.from('comments').insert([{news_id: newsId, content}]);
+  
+  if(error) {
+    alert('تعذر إرسال التعليق');
+  } else {
+    input.value = '';
+    // إضافة التعليق الجديد مكانة فوراً بدل إعادة تحميل الصفحة كاملة
+    const commentsContainer = document.getElementById(`comments-list-${newsId}`);
+    const noCommentText = commentsContainer.querySelector('.no-comment');
+    if(noCommentText) noCommentText.remove();
+    
+    commentsContainer.innerHTML += `<div class="comment">${escapeHtml(content)}</div>`;
+  }
+  btn.disabled = false;
+}
+
+function escapeHtml(text){
+  if(!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// التشغيل التلقائي عند فتح الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+  loadNews();
+});
 </script>
 </body>
-</html>
+        </html>
+  
