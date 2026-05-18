@@ -10,290 +10,149 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Cairo',sans-serif;background:#0a0a0a;color:#fff;padding:15px}
 .container{max-width:800px;margin:0 auto}
-header{background:linear-gradient(90deg,#001a33,#004488);padding:15px;border-radius:12px;border:2px solid #00aaff;margin-bottom:20px;text-align:center;position:relative}
+header{background:linear-gradient(90deg,#001a33,#004488);padding:15px;border-radius:12px;border:2px solid #00aaff;margin-bottom:20px;text-align:center}
 header h1{color:#66ccff;text-shadow:0 0 15px #00aaff}
 .tabs{display:flex;gap:10px;margin-bottom:15px}
-.tab{flex:1;padding:12px;text-align:center;background:#222;border-radius:8px;cursor:pointer;font-weight:700;user-select:none}
+.tab{flex:1;padding:12px;text-align:center;background:#222;border-radius:8px;cursor:pointer;font-weight:700}
 .tab.active{background:#00aaff}
 .card{background:#111;padding:15px;border-radius:12px;border:1px solid #333;margin-bottom:15px}
-input,textarea{width:100%;padding:12px;margin-bottom:10px;background:#1a1a1a;border:1px solid #444;border-radius:8px;color:white;font-family:'Cairo',sans-serif;font-size:15px}
+input,textarea{width:100%;padding:12px;margin-bottom:10px;background:#1a1a1a;border:1px solid #444;border-radius:8px;color:white;font-family:'Cairo',sans-serif}
 input[type="file"]{padding:8px}
-button{padding:12px 20px;background:linear-gradient(90deg,#0088ff,#00aaff);border:none;border-radius:8px;color:white;font-weight:900;cursor:pointer;font-size:15px}
+button{padding:12px 20px;background:linear-gradient(90deg,#0088ff,#00aaff);border:none;border-radius:8px;color:white;font-weight:900;cursor:pointer}
 button:disabled{opacity:0.5;cursor:not-allowed}
-.progress{height:10px;background:#222;border-radius:5px;margin:15px 0;display:none;overflow:hidden;border:1px solid #333}
+.progress{height:10px;background:#222;border-radius:5px;margin:15px 0;display:none;overflow:hidden}
 .progress-bar{height:100%;background:linear-gradient(90deg,#00aaff,#00ffcc);width:0%;transition:width 0.1s linear}
 .news-item{background:#1a1a1a;padding:15px;border-radius:12px;border:1px solid #333;margin-bottom:15px}
-.news-item h3{color:#66ccff;margin-bottom:8px;font-size:20px}
+.news-item h3{color:#66ccff;margin-bottom:8px}
 .meta{color:#888;font-size:13px;margin-bottom:10px}
-.news-item img,.news-item video{width:100%;border-radius:8px;margin-bottom:10px;background:#000;max-height:450px;object-fit:cover}
+.news-item img,.news-item video{width:100%;border-radius:8px;margin-bottom:10px;max-height:450px;object-fit:cover}
 .comment-box{background:#0a0a0a;padding:10px;border-radius:8px;margin-top:15px;border-left:3px solid #00aaff}
-.comment{padding:8px 0;border-bottom:1px solid #222;font-size:14px}
-.comment:last-child{border-bottom:none}
+.comment{padding:8px 0;border-bottom:1px solid #222}
 .comment-input{display:flex;gap:8px;margin-top:8px}
-.empty{text-align:center;color:#666;padding:40px;font-size:16px}
+.empty{text-align:center;color:#666;padding:40px}
 .media-preview{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.media-preview img,.media-preview video{width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid #444}
+.media-preview img,.media-preview video{width:100px;height:100px;object-fit:cover;border-radius:8px}
 </style>
 </head>
 <body>
 <div class="container">
-  <header>
-    <h1>📰 أخبار الناس</h1>
-    <p>انشر خبرك بصور وفيديو وعلق عليه فوراً</p>
-  </header>
-
-  <div class="tabs">
-    <div class="tab active" onclick="showTab(event, 'feed')">الأخبار</div>
-    <div class="tab" onclick="showTab(event, 'post')">نشر خبر</div>
-  </div>
-
-  <div id="feedTab">
-    <div id="newsList"><div class="empty">جاري التحميل...</div></div>
-  </div>
-
-  <div id="postTab" style="display:none">
-    <div class="card">
-      <input type="text" id="title" placeholder="عنوان الخبر">
-      <textarea id="content" rows="6" placeholder="اكتب تفاصيل الخبر هنا"></textarea>
-
-      <label style="display:block;margin-bottom:5px;color:#66ccff">ارفع صور (الحد الأقصى 5MB للظورة)</label>
-      <input type="file" id="imageFile" accept="image/*" multiple>
-
-      <label style="display:block;margin:10px 0 5px;color:#66ccff">ارفع فيديو (الحد الأقصى 40MB)</label>
-      <input type="file" id="videoFile" accept="video/*">
-
-      <div class="media-preview" id="preview"></div>
-      
-      <!-- شريط التحميل المعدل -->
-      <div class="progress" id="progress">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
-
-      <button id="postBtn" onclick="postNews()">نشر الخبر</button>
-    </div>
-  </div>
+<header><h1>📰 أخبار الناس</h1><p>انشر خبرك بصور وفيديو وعلق عليه فوراً</p></header>
+<div class="tabs">
+<div class="tab active" onclick="showTab(event, 'feed')">الأخبار</div>
+<div class="tab" onclick="showTab(event, 'post')">نشر خبر</div>
 </div>
-
+<div id="feedTab"><div id="newsList"><div class="empty">جاري التحميل...</div></div></div>
+<div id="postTab" style="display:none">
+<div class="card">
+<input type="text" id="title" placeholder="عنوان الخبر">
+<textarea id="content" rows="6" placeholder="اكتب تفاصيل الخبر هنا"></textarea>
+<label style="color:#66ccff">ارفع صور</label>
+<input type="file" id="imageFile" accept="image/*" multiple>
+<label style="color:#66ccff;margin-top:10px;display:block">ارفع فيديو</label>
+<input type="file" id="videoFile" accept="video/*">
+<div class="media-preview" id="preview"></div>
+<div class="progress" id="progress"><div class="progress-bar" id="progressBar"></div></div>
+<button id="postBtn" onclick="postNews()">نشر الخبر</button>
+</div>
+</div>
+</div>
 <script>
-// 1. ضع بيانات المشروع الخاص بك هنا
-const SUPABASE_URL = 'https://sb_publishable_CdeI-_nNCN9esA5Gc1DM1g_imrd2VYX
-const SUPABASE_KEY = 'YOUR_ANON_KEY_HERE';
+const SUPABASE_URL = 'https://sb_publishable_CdeI-_nNCN9esA5Gc1DM1g_imrd2VYX.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_CdeI-_nNCN9esA5Gc1DM1g_imrd2VYX';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// تصليح تمرير الـ event لتجنب توقف التبويبات
 function showTab(e, tab){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('feedTab').style.display = tab==='feed'?'block':'none';
-  document.getElementById('postTab').style.display = tab==='post'?'block':'none';
-  e.currentTarget.classList.add('active');
-  if(tab==='feed') loadNews();
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById('feedTab').style.display = tab==='feed'?'block':'none';
+document.getElementById('postTab').style.display = tab==='post'?'block':'none';
+e.currentTarget.classList.add('active');
+if(tab==='feed') loadNews();
 }
 
-// معاينة الوسائط قبل الرفع
 document.getElementById('imageFile').onchange = showPreview;
 document.getElementById('videoFile').onchange = showPreview;
-
 function showPreview(){
-  const preview = document.getElementById('preview');
-  preview.innerHTML = '';
-  const images = document.getElementById('imageFile').files;
-  const video = document.getElementById('videoFile').files[0];
-
-  for(let i=0; i<images.length; i++){
-    const url = URL.createObjectURL(images[i]);
-    preview.innerHTML += `<img src="${url}">`;
-  }
-  if(video){
-    const url = URL.createObjectURL(video);
-    preview.innerHTML += `<video src="${url}" muted></video>`;
-  }
+const preview = document.getElementById('preview');
+preview.innerHTML = '';
+for(let file of document.getElementById('imageFile').files){
+preview.innerHTML += `<img src="${URL.createObjectURL(file)}">`;
+}
+if(document.getElementById('videoFile').files[0]){
+preview.innerHTML += `<video src="${URL.createObjectURL(document.getElementById('videoFile').files[0])}" muted></video>`;
+}
 }
 
-// دالة مساعدة لتحديث شريط التقدم بشكل سلس
-function updateProgress(percentage) {
-  document.getElementById('progressBar').style.width = percentage + '%';
-}
+function updateProgress(p){document.getElementById('progressBar').style.width = p + '%';}
 
-// نشر خبر مع معالجة الحجم والرفع الحقيقي
 async function postNews(){
-  const title = document.getElementById('title').value.trim();
-  const content = document.getElementById('content').value.trim();
-  const imageFiles = document.getElementById('imageFile').files;
-  const videoFile = document.getElementById('videoFile').files[0];
-
-  if(!title || !content){
-    alert('الرجاء كتابة العنوان والمحتوى أولاً');
-    return;
-  }
-
-  // 1. فحص أحجام الملفات لحماية السيرفر من الامتلاء
-  for(let i=0; i<imageFiles.length; i++){
-    if(imageFiles[i].size > 5 * 1024 * 1024){
-      alert(`الصورة "${imageFiles[i].name}" حجمها كبير جداً. الحد الأقصى 5 ميجاابايت.`);
-      return;
-    }
-  }
-  if(videoFile && videoFile.size > 40 * 1024 * 1024){
-    alert('حجم الفيديو كبير جداً! الحد الأقصى المسموح به هو 40 ميجابايت.');
-    return;
-  }
-
-  const postBtn = document.getElementById('postBtn');
-  postBtn.disabled = true;
-  postBtn.textContent = 'جاري الرفع والنشر...';
-  
-  let imageUrls = [];
-  let videoUrl = null;
-
-  try {
-    document.getElementById('progress').style.display = 'block';
-    updateProgress(5);
-
-    // حساب حصة كل ملف في شريط التحميل
-    const totalFiles = imageFiles.length + (videoFile ? 1 : 0);
-    let filesUploaded = 0;
-
-    // رفع الصور
-    for(let i=0; i<imageFiles.length; i++){
-      const file = imageFiles[i];
-      const fileName = Date.now() + '_img_' + i + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '');
-
-      const {error} = await supabase.storage.from('media').upload(fileName, file);
-      if(error) throw error;
-
-      const {data:{publicUrl}} = supabase.storage.from('media').getPublicUrl(fileName);
-      imageUrls.push(publicUrl);
-
-      filesUploaded++;
-      updateProgress((filesUploaded / totalFiles) * 90); 
-    }
-
-    // رفع الفيديو
-    if(videoFile){
-      const fileName = Date.now() + '_vid_' + videoFile.name.replace(/[^a-zA-Z0-9.]/g, '');
-      const {error} = await supabase.storage.from('media').upload(fileName, videoFile);
-      if(error) throw error;
-
-      const {data:{publicUrl}} = supabase.storage.from('media').getPublicUrl(fileName);
-      videoUrl = publicUrl;
-
-      filesUploaded++;
-      updateProgress(90);
-    }
-
-    // حفظ البيانات في الجدول لقاعدة البيانات
-    const {error} = await supabase.from('news').insert([{
-      title,
-      content,
-      image_urls: imageUrls,
-      video_url: videoUrl
-    }]);
-
-    if(error) throw error;
-
-    updateProgress(100);
-    setTimeout(() => {
-      alert('تم نشر الخبر بنجاح! 🎉');
-      resetForm();
-      // افتح تبويب الأخبار بشكل صحيح ومرر الـ event كـ null
-      showTab({ currentTarget: document.querySelectorAll('.tab')[0] }, 'feed');
-    }, 400);
-
-  } catch(err){
-    alert('حدث خطأ أثناء النشر: ' + err.message);
-    console.error(err);
-  } finally {
-    postBtn.disabled = false;
-    postBtn.textContent = 'نشر الخبر';
-    document.getElementById('progress').style.style.display = 'none';
-  }
+const title = document.getElementById('title').value.trim();
+const content = document.getElementById('content').value.trim();
+const imageFiles = document.getElementById('imageFile').files;
+const videoFile = document.getElementById('videoFile').files[0];
+if(!title ||!content){alert('اكتب العنوان والمحتوى');return;}
+const btn = document.getElementById('postBtn');
+btn.disabled = true;btn.textContent = 'جاري النشر...';
+let imageUrls = [];let videoUrl = null;
+try{
+document.getElementById('progress').style.display = 'block';updateProgress(5);
+for(let i=0;i<imageFiles.length;i++){
+const file = imageFiles[i];
+const name = Date.now()+'_img_'+i;
+const {error} = await supabase.storage.from('media').upload(name, file);
+if(error)throw error;
+imageUrls.push(supabase.storage.from('media').getPublicUrl(name).data.publicUrl);
+updateProgress(50);
+}
+if(videoFile){
+const name = Date.now()+'_vid';
+const {error} = await supabase.storage.from('media').upload(name, videoFile);
+if(error)throw error;
+videoUrl = supabase.storage.from('media').getPublicUrl(name).data.publicUrl;
+}
+await supabase.from('news').insert([{title,content,image_urls:imageUrls,video_url:videoUrl}]);
+updateProgress(100);
+alert('تم النشر!');resetForm();showTab({currentTarget:document.querySelectorAll('.tab')[0]},'feed');
+}catch(err){alert('خطأ: '+err.message);}
+finally{btn.disabled=false;btn.textContent='نشر الخبر';document.getElementById('progress').style.display='none';}
 }
 
 function resetForm(){
-  document.getElementById('title').value='';
-  document.getElementById('content').value='';
-  document.getElementById('imageFile').value='';
-  document.getElementById('videoFile').value='';
-  document.getElementById('preview').innerHTML='';
-  updateProgress(0);
+document.getElementById('title').value='';document.getElementById('content').value='';
+document.getElementById('imageFile').value='';document.getElementById('videoFile').value='';
+document.getElementById('preview').innerHTML='';updateProgress(0);
 }
 
 async function loadNews(){
-  // جلب الأخبار مع التعليقات المرتبطة بها
-  const {data, error} = await supabase.from('news')
-    .select('*, comments(*)')
-    .order('created_at', {ascending: false});
-
-  if(error){
-    document.getElementById('newsList').innerHTML='<div class="empty">حدث خطأ أثناء تحميل الأخبار</div>';
-    return;
-  }
-
-  if(!data || data.length === 0){
-    document.getElementById('newsList').innerHTML='<div class="empty">لا توجد أخبار منشورة حالياً</div>';
-    return;
-  }
-
-  document.getElementById('newsList').innerHTML = data.map(news=>`
-    <div class="news-item">
-      <h3>${escapeHtml(news.title)}</h3>
-      <div class="meta">${new Date(news.created_at).toLocaleString('ar-LY')}</div>
-
-      ${news.image_urls && Array.isArray(news.image_urls) ? news.image_urls.map(url=>`<img src="${url}" alt="صورة الخبر">`).join(''):''}
-      ${news.video_url ? `<video src="${news.video_url}" controls preload="metadata"></video>`:''}
-
-      <p style="line-height:1.8; white-space: pre-line;">${escapeHtml(news.content)}</p>
-
-      <div class="comment-box">
-        <h4 style="margin-bottom:8px; color:#66ccff">التعليقات</h4>
-        <div id="comments-list-${news.id}">
-          ${news.comments && news.comments.length > 0 ? news.comments.map(c=>`<div class="comment">${escapeHtml(c.content)}</div>`).join('') : '<p style="color:#555; font-size:13px;" class="no-comment">لا توجد تعليقات بعد.</p>'}
-        </div>
-        <div class="comment-input">
-          <input type="text" id="comment-${news.id}" placeholder="اكتب تعليقاً عاجلاً...">
-          <button onclick="postComment(${news.id})">تعليق</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
+const {data,error} = await supabase.from('news').select('*, comments(*)').order('created_at',{ascending:false});
+if(error){document.getElementById('newsList').innerHTML='<div class="empty">خطأ في التحميل</div>';return;}
+if(!data.length){document.getElementById('newsList').innerHTML='<div class="empty">مفيش أخبار</div>';return;}
+document.getElementById('newsList').innerHTML = data.map(n=>`
+<div class="news-item">
+<h3>${n.title}</h3>
+<div class="meta">${new Date(n.created_at).toLocaleString('ar-LY')}</div>
+${n.image_urls? n.image_urls.map(u=>`<img src="${u}">`).join(''):''}
+${n.video_url? `<video src="${n.video_url}" controls></video>`:''}
+<p>${n.content}</p>
+<div class="comment-box">
+<h4>التعليقات</h4>
+<div id="c-${n.id}">${n.comments.map(c=>`<div class="comment">${c.content}</div>`).join('') || '<p>لا توجد تعليقات</p>'}</div>
+<div class="comment-input">
+<input type="text" id="cm-${n.id}" placeholder="اكتب تعليق">
+<button onclick="postComment(${n.id})">تعليق</button>
+</div>
+</div>
+</div>`).join('');
 }
 
-async function postComment(newsId){
-  const input = document.getElementById(`comment-${newsId}`);
-  const content = input.value.trim();
-  if(!content) return;
-
-  const btn = input.nextElementSibling;
-  btn.disabled = true;
-
-  const {error} = await supabase.from('comments').insert([{news_id: newsId, content}]);
-  
-  if(error) {
-    alert('تعذر إرسال التعليق');
-  } else {
-    input.value = '';
-    // إضافة التعليق الجديد مكانة فوراً بدل إعادة تحميل الصفحة كاملة
-    const commentsContainer = document.getElementById(`comments-list-${newsId}`);
-    const noCommentText = commentsContainer.querySelector('.no-comment');
-    if(noCommentText) noCommentText.remove();
-    
-    commentsContainer.innerHTML += `<div class="comment">${escapeHtml(content)}</div>`;
-  }
-  btn.disabled = false;
+async function postComment(id){
+const input = document.getElementById('cm-'+id);
+const content = input.value.trim();
+if(!content)return;
+await supabase.from('comments').insert([{news_id:id,content}]);
+input.value='';loadNews();
 }
 
-function escapeHtml(text){
-  if(!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-// التشغيل التلقائي عند فتح الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-  loadNews();
-});
+document.addEventListener('DOMContentLoaded', loadNews);
 </script>
 </body>
-        </html>
-  
+  </html>
