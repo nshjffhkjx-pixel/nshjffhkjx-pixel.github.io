@@ -56,6 +56,7 @@ button:disabled{opacity:0.5;cursor:not-allowed}
 </div>
 </div>
 </div>
+
 <script>
 const SUPABASE_URL = 'https://opvaabzktptapypngrre.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_CdeI-_nNCN9esA5Gc1DM1g_imrd2VYX';
@@ -68,8 +69,10 @@ document.getElementById('postTab').style.display = tab==='post'?'block':'none';
 e.currentTarget.classList.add('active');
 if(tab==='feed') loadNews();
 }
+
 document.getElementById('imageFile').onchange = showPreview;
 document.getElementById('videoFile').onchange = showPreview;
+
 function showPreview(){
 const preview = document.getElementById('preview');
 preview.innerHTML = '';
@@ -79,16 +82,23 @@ preview.innerHTML += `<img src="${URL.createObjectURL(file)}">`;
 if(document.getElementById('videoFile').files[0]){
 preview.innerHTML += `<video src="${URL.createObjectURL(document.getElementById('videoFile').files[0])}" muted></video>`;
 }
-function updateProgress(p){document.getElementById('progressBar').style.width = p + '%';}
+}
+
+function updateProgress(p){
+document.getElementById('progressBar').style.width = p + '%';
+}
+
 async function postNews(){
 const title = document.getElementById('title').value.trim();
 const content = document.getElementById('content').value.trim();
 const imageFiles = document.getElementById('imageFile').files;
 const videoFile = document.getElementById('videoFile').files[0];
 if(!title ||!content){alert('اكتب العنوان والمحتوى');return;}
+
 const btn = document.getElementById('postBtn');
 btn.disabled = true;btn.textContent = 'جاري النشر...';
 let imageUrls = [];let videoUrl = null;
+
 try{
 document.getElementById('progress').style.display = 'block';updateProgress(5);
 for(let i=0;i<imageFiles.length;i++){
@@ -107,14 +117,22 @@ videoUrl = supabase.storage.from('media').getPublicUrl(name).data.publicUrl;
 }
 await supabase.from('news').insert([{title,content,image_urls:imageUrls,video_url:videoUrl}]);
 updateProgress(100);
-alert('تم النشر!');resetForm();showTab({currentTarget:document.querySelectorAll('.tab')[0]},'feed');
+alert('تم النشر!');
+resetForm();
+showTab({currentTarget:document.querySelectorAll('.tab')[0]},'feed');
 }catch(err){alert('خطأ: '+err.message);}
 finally{btn.disabled=false;btn.textContent='نشر الخبر';document.getElementById('progress').style.display='none';}
-function resetForm(){
-document.getElementById('title').value='';document.getElementById('content').value='';
-document.getElementById('imageFile').value='';document.getElementById('videoFile').value='';
-document.getElementById('preview').innerHTML='';updateProgress(0);
 }
+
+function resetForm(){
+document.getElementById('title').value='';
+document.getElementById('content').value='';
+document.getElementById('imageFile').value='';
+document.getElementById('videoFile').value='';
+document.getElementById('preview').innerHTML='';
+updateProgress(0);
+}
+
 async function loadNews(){
 const {data,error} = await supabase.from('news').select('*, comments(*)').order('created_at',{ascending:false});
 if(error){document.getElementById('newsList').innerHTML='<div class="empty">خطأ في التحميل</div>';return;}
@@ -136,13 +154,16 @@ ${n.video_url? `<video src="${n.video_url}" controls></video>`:''}
 </div>
 </div>`).join('');
 }
+
 async function postComment(id){
 const input = document.getElementById('cm-'+id);
 const content = input.value.trim();
 if(!content)return;
 await supabase.from('comments').insert([{news_id:id,content}]);
-input.value='';loadNews();
+input.value='';
+loadNews();
 }
+
 document.addEventListener('DOMContentLoaded', loadNews);
 </script>
 </body>
